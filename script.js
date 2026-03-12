@@ -205,10 +205,89 @@ class TigerExperience {
     }
 }
 
+class UIController {
+    constructor() {
+        this.initLazyLoading();
+        this.initCarousel();
+        this.initFadeInSections();
+    }
+
+    initLazyLoading() {
+        const lazyImages = document.querySelectorAll('.lazy-image');
+        
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.onload = () => img.classList.add('loaded');
+                    } else {
+                        img.classList.add('loaded'); // Fallback if no real source
+                    }
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: "0px 0px 50px 0px"
+        });
+
+        lazyImages.forEach(img => imageObserver.observe(img));
+    }
+
+    initCarousel() {
+        const carousel = document.getElementById('carousel');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        if (!carousel || !prevBtn || !nextBtn) return;
+
+        const scrollAmount = () => {
+            const item = carousel.querySelector('.carousel-item');
+            if (item) {
+                return item.offsetWidth + parseFloat(getComputedStyle(carousel).gap || 0);
+            }
+            return 300;
+        };
+
+        prevBtn.addEventListener('click', () => {
+            carousel.scrollBy({
+                left: -scrollAmount(),
+                behavior: 'smooth'
+            });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            carousel.scrollBy({
+                left: scrollAmount(),
+                behavior: 'smooth'
+            });
+        });
+    }
+
+    initFadeInSections() {
+        const sections = document.querySelectorAll('.fade-in-section');
+        
+        const sectionObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        });
+
+        sections.forEach(section => sectionObserver.observe(section));
+    }
+}
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     new TigerExperience();
+    new UIController();
 });
 // Set current year in footer
 document.getElementById("year").textContent = new Date().getFullYear();
