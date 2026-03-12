@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nike Air Max Pulse</title>
+
+  <!-- Link Styles -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="./assets/favicon.png">
+
+  <!-- CDN Links -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="https://unpkg.com/lenis@1.1.2/dist/lenis.min.js" defer></script>
+
+  <!-- Link Main JS -->
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <nav>
+      <div class="logo">NIKE</div>
+      <!-- Navigation links would go here -->
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Scrollytelling Section -->
+    <section class="hero-section" style="height: 800vh; position: relative;">
+      <div class="sticky-wrapper" style="position: sticky; top: 0; width: 100%; height: 100vh; overflow: hidden;">
+        <!-- Full viewport canvas elements -->
+        <canvas id="ambient-canvas" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;"></canvas>
+        <canvas id="tiger-canvas" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;"></canvas>
+
+        <!-- Hero overlay text -->
+        <div class="hero-overlay-text" style="position: relative; z-index: 10;">
+          <h1>AIR MAX PULSE</h1>
+          <p>Pushing past the limits</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Post-Hero Sections -->
+    <!-- P1: First Look section -->
+    <section id="first-look" class="first-look fade-in-section">
+      <div class="section-content">
+        <h2>First Look</h2>
+        <div class="first-look-content">
+          <img data-src="assets/first-look.jpg" alt="Air Max Pulse First Look" class="lazy-image">
+          <p>Meet the new Air Max Pulse. Inspired by the London music scene, it brings an underground touch to the
+            iconic Air Max line. Its textile-wrapped midsole and vacuum-sealed accents keep it looking fresh and clean.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- P2: Best of Air Max carousel -->
+    <section id="best-of-air-max" class="best-of-air-max fade-in-section">
+      <div class="section-content">
+        <div class="carousel-header">
+          <h2>Best of Air Max</h2>
+          <div class="carousel-nav">
+            <button id="prev-btn" class="nav-btn" aria-label="Previous">&larr;</button>
+            <button id="next-btn" class="nav-btn" aria-label="Next">&rarr;</button>
+          </div>
+        </div>
+        <div class="carousel-container" id="carousel">
+          <!-- Carousel items -->
+          <div class="carousel-item">
+            <img data-src="./assets/shoe-1.jpg" alt="Air Max 1" class="lazy-image">
+            <div class="item-info">
+              <h3>Air Max 1</h3>
+              <p>$150</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img data-src="assets/shoe-2.jpg" alt="Air Max 90" class="lazy-image">
+            <div class="item-info">
+              <h3>Air Max 90</h3>
+              <p>$130</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img data-src="assets/shoe-3.jpg" alt="Air Max 95" class="lazy-image">
+            <div class="item-info">
+              <h3>Air Max 95</h3>
+              <p>$175</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img data-src="assets/shoe-4.jpg" alt="Air Max 97" class="lazy-image">
+            <div class="item-info">
+              <h3>Air Max 97</h3>
+              <p>$175</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img data-src="assets/shoe-5.jpg" alt="Air Max 270" class="lazy-image">
+            <div class="item-info">
+              <h3>Air Max 270</h3>
+              <p>$160</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- P3: Cinematic banner -->
+    <section id="cinematic-banner" class="cinematic-banner fade-in-section">
+      <div class="section-content">
+        <h2>Feel the Unreal</h2>
+        <p>Experience the next generation of Air technology with the Air Max Pulse. Designed for those who never stop
+          moving.</p>
+        <button class="cta-button">Shop Now</button>
+      </div>
+    </section>
+
+    <!-- P4: Essentials grid -->
+    <section id="essentials-grid" class="essentials-grid fade-in-section">
+      <div class="section-content">
+        <h2>The Essentials</h2>
+        <div class="grid-container">
+          <div class="grid-item">
+            <img data-src="assets/essential-1.jpg" alt="Clothing" class="lazy-image">
+            <h3>Clothing</h3>
+          </div>
+          <div class="grid-item">
+            <img data-src="assets/essential-2.jpg" alt="Accessories" class="lazy-image">
+            <h3>Accessories</h3>
+          </div>
+          <div class="grid-item">
+            <img data-src="assets/essential-3.jpg" alt="Equipment" class="lazy-image">
+            <h3>Equipment</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p>&copy; <span id="year"></span> Nike, Inc. All Rights Reserved</p>
+    </div>
+  </footer>
+
+</body>
+
+</html>
