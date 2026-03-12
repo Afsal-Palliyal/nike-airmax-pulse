@@ -32,7 +32,7 @@ The hero animation is rendered using a canvas-based frame sequence synced with s
 
 ## Live Demo
 
-https://demo-link.com
+https://nike-airmax-pulse.vercel.app/
 
 ## Run Locally
 
