@@ -17,10 +17,11 @@ class TigerExperience {
     }
 
     async init() {
+        await this.loadFirstFrame();
         this.initLenis();
-        await this.preloadFrames();
         this.handleResize();
         this.renderFrame(0);
+        this.progressivePreload();
         this.initScroll();
         this.addEventListeners();
     }
@@ -40,38 +41,74 @@ class TigerExperience {
         requestAnimationFrame(raf);
     }
 
-    async preloadFrames() {
+    loadFirstFrame() {
         return new Promise((resolve) => {
-            let loadedCount = 0;
+            const img = new Image();
+            img.decoding = "async";
+            const src = 'assets/nike-tiger-images/ezgif-frame-001.webp';
             
-            for (let i = 1; i <= this.frameCount; i++) {
-                const img = new Image();
-                // Format number with leading zeros: 001, 002, etc.
-                const frameNumber = i.toString().padStart(3, '0');
-                const src = `assets/nike-tiger-images/ezgif-frame-${frameNumber}.webp`;
-                
-                img.onload = () => {
-                    loadedCount++;
-                    if (loadedCount === this.frameCount) {
-                        this.isLoaded = true;
-                        resolve();
-                    }
-                };
-                
-                img.onerror = () => {
-                    console.error(`Failed to load image: ${src}`);
-                    // Still increment to avoid getting stuck if an image is missing
-                    loadedCount++;
-                    if (loadedCount === this.frameCount) {
-                        this.isLoaded = true;
-                        resolve();
-                    }
-                };
+            img.onload = () => {
+                this.images[0] = img;
+                this.isLoaded = true;
+                resolve();
+            };
+            
+            img.onerror = () => {
+                console.error(`Failed to load image: ${src}`);
+                this.isLoaded = true;
+                resolve();
+            };
 
-                img.src = src;
-                this.images.push(img);
-            }
+            img.src = src;
         });
+    }
+
+    progressivePreload() {
+        let currentLoadIndex = 2; // Start from frame 002
+        const batchSize = 8; // Load 8 frames at a time
+
+        const loadBatch = () => {
+            if (currentLoadIndex > this.frameCount) return;
+
+            const batchPromises = [];
+            for (let i = 0; i < batchSize && currentLoadIndex <= this.frameCount; i++, currentLoadIndex++) {
+                const indexToLoad = currentLoadIndex;
+                batchPromises.push(new Promise((resolve) => {
+                    const img = new Image();
+                    img.decoding = "async";
+                    const frameNumber = indexToLoad.toString().padStart(3, '0');
+                    const src = `assets/nike-tiger-images/ezgif-frame-${frameNumber}.webp`;
+                    
+                    img.onload = () => {
+                        this.images[indexToLoad - 1] = img;
+                        resolve();
+                    };
+                    
+                    img.onerror = () => {
+                        console.error(`Failed to load image: ${src}`);
+                        resolve();
+                    };
+                    
+                    img.src = src;
+                }));
+            }
+
+            Promise.all(batchPromises).then(() => {
+                if (currentLoadIndex <= this.frameCount) {
+                    if ('requestIdleCallback' in window) {
+                        requestIdleCallback(loadBatch);
+                    } else {
+                        setTimeout(loadBatch, 10);
+                    }
+                }
+            });
+        };
+
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(loadBatch);
+        } else {
+            setTimeout(loadBatch, 10);
+        }
     }
 
     updateFrame(progress) {
@@ -79,7 +116,7 @@ class TigerExperience {
         
         const frameIndex = Math.min(
             this.frameCount - 1,
-            Math.floor(progress * this.frameCount)
+            Math.floor(progress * (this.frameCount - 1))
         );
         
         if (this.currentFrame !== frameIndex) {
@@ -89,7 +126,28 @@ class TigerExperience {
     }
 
     renderFrame(index) {
-        const img = this.images[index];
+        let renderIndex = index;
+        
+        if (!this.images[renderIndex] || !this.images[renderIndex].complete || this.images[renderIndex].naturalWidth === 0) {
+            let found = false;
+            for (let i = renderIndex - 1; i >= 0; i--) {
+                if (this.images[i] && this.images[i].complete && this.images[i].naturalWidth > 0) {
+                    renderIndex = i;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                for (let i = renderIndex + 1; i < this.frameCount; i++) {
+                    if (this.images[i] && this.images[i].complete && this.images[i].naturalWidth > 0) {
+                        renderIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        const img = this.images[renderIndex];
         if (!img || !img.complete || img.naturalWidth === 0) return;
 
         // Clear both canvases
